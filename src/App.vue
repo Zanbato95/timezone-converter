@@ -1,28 +1,17 @@
 <template>
     <div id="app">
-        <div>
-            <button
-                type="button"
-                class="btn btn-primary mx-2"
-                @click="addTimeZone"
-            >
-                Add Timezone
-            </button>
-            <button
-                type="button"
-                class="btn btn-warning mx-2"
-                @click="addNewEvent"
-            >
-                Add Event/Date
-            </button>
-        </div>
-        <div class="container mt-3">
-            <table class="table">
+        <Header />
+        <div class="container-fluid mt-3">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Date</th>
-                        <th v-for="(timeZone, index) in timeZones" :key="index">
+                        <th
+                            class="tabs"
+                            v-for="(timeZone, index) in timeZones"
+                            :key="index"
+                        >
                             <TimeZonePicker
                                 :timeZone="timeZone"
                                 @inputTimeZone="updateTimeZone($event, index)"
@@ -33,13 +22,26 @@
                 </thead>
                 <tbody>
                     <template v-for="(eventRow, index) in eventRows">
-                        <EventRow
-                            :key="index"
-                            :timeZones="timeZones"
-                        />
+                        <EventRow :key="index" :timeZones="timeZones" />
                     </template>
                 </tbody>
             </table>
+        </div>
+        <div class="app-buttons">
+            <button
+                type="button"
+                class="btn btn-primary mx-2"
+                @click="addNewEvent"
+            >
+                Add Event/Date
+            </button>
+            <button
+                type="button"
+                class="btn btn-success mx-2"
+                @click="addTimeZone"
+            >
+                Add Timezone
+            </button>
         </div>
     </div>
 </template>
@@ -48,12 +50,14 @@
 import moment from "moment-timezone";
 import EventRow from "./components/EventRow.vue";
 import TimeZonePicker from "./components/TimeZonePicker.vue";
+import Header from "./components/Header.vue";
 
 export default {
     name: "App",
     components: {
         EventRow,
         TimeZonePicker,
+        Header,
     },
     data() {
         return {
@@ -84,5 +88,14 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style scoped>
+#app {
+    margin-top: 5em;
+}
+.app-buttons {
+    position: fixed;
+    right: 3rem;
+    bottom: 3rem;
+}
+</style>>
+

@@ -2,10 +2,11 @@
     <div>
         <input
             type="time"
-            v-model="mytime"
+            v-model="myTime"
             @input="update"
             :disabled="date === '' || timeZone === null"
         />
+        <small v-show="myDate" class="text-muted px-2">({{ myDate }})</small>
     </div>
 </template>
 
@@ -21,28 +22,61 @@ export default {
     },
     data() {
         return {
-            mytime: null,
+            myTime: null,
+            myDate: null,
+            differentDate: false,
         };
     },
     methods: {
         update(event) {
-            let momentTime = moment.tz(
-                this.date + " " + event.target.value,
-                this.timeZone
-            );
+            let response = {
+                time: event.target.value,
+                timeZone: this.timeZone,
+            };
 
-            this.$emit("updateTime", momentTime);
+            this.$emit("updateTime", response);
+        },
+        updateTimepicker() {
+            let cloneMoment = moment(this.momentTime);
+
+            if (this.date === "" || this.timeZone === null) {
+                this.myTime = null;
+            } else {
+                this.myTime = cloneMoment.tz(this.timeZone).format("HH:mm");
+            }
+        },
+        updateMyDate() {
+            let cloneMoment = moment(this.momentTime);
+
+            if (
+                this.timeZone == null ||
+                cloneMoment
+                    .tz(this.timeZone)
+                    .isSame(moment.tz(this.date, this.timeZone), "day")
+            ) {
+                this.myDate = null;
+            } else {
+                this.myDate = cloneMoment
+                    .tz(this.timeZone)
+                    .format("MMM. DD, YYYY");
+            }
         },
     },
     created() {
-        this.mytime = this.momentTime.tz(this.timeZone).format("HH:mm");
+        this.updateTimepicker();
     },
     watch: {
+        date() {
+            this.updateTimepicker();
+            this.updateMyDate();
+        },
         momentTime() {
-            this.mytime = this.momentTime.tz(this.timeZone).format("HH:mm");
+            this.updateTimepicker();
+            this.updateMyDate();
         },
         timeZone() {
-            this.mytime = this.momentTime.tz(this.timeZone).format("HH:mm");
+            this.updateTimepicker();
+            this.updateMyDate();
         },
     },
 };

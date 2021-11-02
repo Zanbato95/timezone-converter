@@ -2,30 +2,26 @@
     <tr class="mb-4">
         <td class="col">
             <div class="d-flex align-items-center">
-                <button
-                    type="button"
-                    class="btn btn-danger btn-sm mx-2"
+                <font-awesome-icon
+                    class="me-3 remove-button"
                     @click="removeEvent"
-                >
-                    Delete
-                </button>
-                <input
-                    type="text"
-                    @input="$emit('updateName', $event)"
+                    icon="times"
                 />
+
+                <input type="text" @input="$emit('updateName', $event)" />
             </div>
         </td>
         <td class="col">
-            <input type="date" v-model="date" />
+            <input type="date" v-model="eventDate" />
         </td>
         <td v-for="(timeZone, index) in timeZones" :key="index">
             <TimePicker
                 class="col"
                 :key="index"
                 :timeZone="timeZone"
-                :date="date"
+                :date="eventDate"
                 :momentTime="moment"
-                @updateTime="updateMoment"
+                @updateTime="updateTime"
             />
         </td>
     </tr>
@@ -46,13 +42,16 @@ export default {
     },
     data() {
         return {
-            date: "",
-            moment: {},
+            eventDate: "",
+            moment: "",
         };
     },
     methods: {
-        updateMoment(response) {
-            this.moment = response;
+        updateTime(response) {
+            this.moment = moment.tz(
+                this.eventDate + " " + response.time,
+                response.timeZone
+            );
         },
         removeEvent() {
             // destroy the vue listeners, etc
@@ -62,24 +61,33 @@ export default {
             this.$el.parentNode.removeChild(this.$el);
         },
     },
-    computed: {
-        datetime: function () {
-            let datetime = this.date + " " + this.time;
-
-            if (moment(datetime, "YYYY-MM-DD HH:mm", true).isValid()) {
-                return datetime;
-            }
-
-            return null;
-        },
-    },
+    computed: {},
     created() {
         this.moment = moment();
-        this.date = this.moment.format("YYYY-MM-DD");
+        this.eventDate = this.moment.format("YYYY-MM-DD");
     },
-    watch: {},
+    watch: {
+        eventDate() {
+            let newDate = moment(this.eventDate);
+            let momentObject = newDate.toObject();
+
+            this.moment.set({
+                years: momentObject.years,
+                months: momentObject.months,
+                date: momentObject.date,
+            });
+        },
+    },
 };
 </script>
 
 <style>
+.remove-button {
+    color: rgb(34, 34, 34);
+    font-size: 1.5em;
+}
+.remove-button:hover {
+    color: rgb(156, 156, 156);
+    cursor: pointer;
+}
 </style>

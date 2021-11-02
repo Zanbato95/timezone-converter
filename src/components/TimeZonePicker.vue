@@ -1,13 +1,13 @@
 <template>
-    <div class="">
-        <div style="min-width:170px;">
+    <div class="d-inline-flex justify-content-center align-items-center">
+        <span style="min-width: 240px; margin-right: 10px">
             <v-select
                 :options="timeZones"
                 @input="$emit('inputTimeZone', $event)"
                 :value="timeZone"
             ></v-select>
-        </div>
-        <button type="button" class="btn btn-danger" @click="$emit('removeTimeZone', 'remove')">x</button>
+        </span>
+        <a type="button" @click="$emit('removeTimeZone', 'remove')">x</a>
     </div>
 </template>
 
